@@ -6,6 +6,11 @@ This guide provides instructions on how to deploy the **todoapp** to a Kubernete
 
 ## How to Deploy the App
 
+At first: 
+```bash
+    cd .infrastructure
+```
+
 1.  **Create the Namespace:**
     ```bash
     kubectl apply -f namespace.yml
@@ -39,6 +44,21 @@ This guide provides instructions on how to deploy the **todoapp** to a Kubernete
 * **Min: 2 / Max: 5:** ✅ The app starts with 2 replicas for high availability and can scale up to 5 pods during high-load periods.
 * **Metrics (70% CPU/Memory):** ✅ Scaling is triggered when average utilization exceeds 70%, leaving a 30% buffer to handle request spikes while new pods are being initialized.
 
+### 4. Health Probe Verification & Pod Spec Parity
+✅ The application endpoints `/api/health` and `/api/ready` have been verified. The standalone Pod manifest and the Deployment spec are now perfectly aligned.
+
+#### Verified Endpoints:
+* **Liveness Probe:** `http://<pod-ip>:8080/api/health` — Verified via `curl`, returns `200 OK`. ✅
+* **Readiness Probe:** `http://<pod-ip>:8080/api/ready` — Verified via `curl`, returns `200 OK`. ✅
+
+#### Infrastructure Requirements for HPA:
+* **Metrics Server:** The cluster must have `metrics-server` installed for CPU/Memory scaling. ✅
+* **API Version:** Uses `autoscaling/v2` for multi-metric support. ✅
+
+### 5. Image Availability & Reproducibility
+✅ The deployment uses the image `ikulyk404/todoapp:3.0.0`. 
+
+* **Public Access:** This image is hosted on Docker Hub and is publicly available. No `imagePullSecrets` or authentication is required to pull the image. ✅
 ---
 
 ## How to Access the App
